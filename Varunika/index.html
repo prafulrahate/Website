@@ -563,7 +563,7 @@
             const btnHeight = noBtn.offsetHeight;
 
             // 5. Define Safety Padding
-            const padding = 30; 
+            const padding = 100; 
 
             // 6. Calculate Center-Based Limits
             // The maximum distance the *center* of the button can be from the *center* of the screen:
@@ -583,8 +583,8 @@
             const centerX = viewportWidth / 2;
             const centerY = viewportHeight / 2;
 
-            const finalLeft = centerX + randomX - (btnWidth / 1);
-            const finalTop = centerY + randomY - (btnHeight / 1);
+            const finalLeft = centerX + randomX - (btnWidth / 2);
+            const finalTop = centerY + randomY - (btnHeight / 2);
 
             // 9. Apply
             noBtn.style.left = finalLeft + 'px';
@@ -670,3 +670,4 @@
     </script>
 </body>
 </html>
+
