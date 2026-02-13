@@ -122,6 +122,34 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Countdown Styles */
+        .countdown-container {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .time-box {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 70px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .time-val {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--deep-red);
+            display: block;
+        }
+        
+        .time-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         /* Typography */
         h1 {
             font-family: 'Pacifico', cursive;
@@ -208,6 +236,14 @@
             transform: scale(1.05);
             box-shadow: 0 6px 20px rgba(199, 24, 74, 0.2);
         }
+        
+        .btn-next:disabled {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
         /* Proposal Specific Buttons */
         .btn-yes {
@@ -270,6 +306,8 @@
             .btn-yes { width: 100%; padding: 15px; }
             .btn-no { width: auto; }
             .photo-frame { padding: 10px; }
+            .time-val { font-size: 1.5rem; }
+            .time-box { min-width: 60px; padding: 10px; }
         }
     </style>
 </head>
@@ -283,8 +321,42 @@
 
     <div id="app">
         
+        <!-- Slide 0: Countdown (Start Here) -->
+        <div class="slide active" id="slide-0">
+            <h1>Counting Down...</h1>
+            <p>Something special is coming.</p>
+            
+            <div class="countdown-container">
+                <div class="time-box">
+                    <span class="time-val" id="days">00</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-box">
+                    <span class="time-val" id="hours">00</span>
+                    <span class="time-label">Hrs</span>
+                </div>
+                <div class="time-box">
+                    <span class="time-val" id="minutes">00</span>
+                    <span class="time-label">Min</span>
+                </div>
+                <div class="time-box">
+                    <span class="time-val" id="seconds">00</span>
+                    <span class="time-label">Sec</span>
+                </div>
+            </div>
+
+            <p id="wait-message">Wait until Feb 14th, 12:00 AM! ⏰</p>
+            
+            <button class="btn-next" id="enter-btn" onclick="nextSlide(1)" disabled>
+                Locked 🔒
+            </button>
+            
+            <!-- Hidden bypass for testing -->
+            <button onclick="nextSlide(1)" style="margin-top: 30px; background: transparent; border: none; font-size: 10px; opacity: 0.3; cursor: pointer;">(Test Bypass)</button>
+        </div>
+
         <!-- Slide 1: Welcome -->
-        <div class="slide active" id="slide-1">
+        <div class="slide" id="slide-1">
             <h1>Hey Varunika...</h1>
             <p>I have something important to ask you.</p>
             <p>But first, I need you to promise to answer honestly.</p>
@@ -349,6 +421,58 @@
             document.getElementById(`slide-${slideNumber}`).classList.add('active');
         }
 
+        // --- Countdown Logic ---
+        function startCountdown() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            
+            // Target: Feb 14th, 00:00:00
+            // Note: Month is 0-indexed (0=Jan, 1=Feb)
+            let targetDate = new Date(currentYear, 1, 14, 0, 0, 0);
+
+            // If we've passed Feb 14th this year, look for next year? 
+            // OR if you want to test it "today", assume target is next occurring Feb 14.
+            if (now.getTime() > targetDate.getTime()) {
+                 targetDate = new Date(currentYear + 1, 1, 14, 0, 0, 0);
+            }
+
+            const timer = setInterval(function() {
+                const currentTime = new Date().getTime();
+                const distance = targetDate.getTime() - currentTime;
+
+                // Calculations
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Update HTML
+                document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+                document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+                document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+                document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+
+                // If timer expires
+                if (distance < 0) {
+                    clearInterval(timer);
+                    document.getElementById("days").innerText = "00";
+                    document.getElementById("hours").innerText = "00";
+                    document.getElementById("minutes").innerText = "00";
+                    document.getElementById("seconds").innerText = "00";
+                    
+                    document.getElementById("wait-message").innerText = "It's time! Happy Valentine's Day! 💖";
+                    const btn = document.getElementById("enter-btn");
+                    btn.disabled = false;
+                    btn.innerText = "Enter ❤️";
+                    btn.classList.add('btn-yes'); // Add pulse animation
+                }
+            }, 1000);
+        }
+        
+        // Start the countdown immediately
+        startCountdown();
+
+
         // --- Gallery Logic (Slide 5) ---
         // REPLACE these filenames with your actual photo names
         const ourMemories = [
@@ -398,7 +522,6 @@
         }
 
         // Initialize Gallery with first image
-        // Check if images exist, if not show error in console or placeholder
         const firstImage = ourMemories[0].url;
         document.getElementById('gallery-img').src = firstImage;
         document.getElementById('gallery-caption').innerText = `"${ourMemories[0].caption}"`;
@@ -440,7 +563,7 @@
             const btnHeight = noBtn.offsetHeight;
 
             // 5. Define Safety Padding
-            const padding = 100; 
+            const padding = 30; 
 
             // 6. Calculate Center-Based Limits
             // The maximum distance the *center* of the button can be from the *center* of the screen:
@@ -547,6 +670,3 @@
     </script>
 </body>
 </html>
-
-
-
