@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+
+    <!-- Meta Data -->
+    <meta name="description" content="A romantic interactive Valentine's Day proposal for Varunika from Praful.">
+    <meta name="author" content="Praful Rahate">
+    <meta name="theme-color" content="#ff8fa3">
+
+    <!-- Open Graph / Facebook / WhatsApp Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Will You Be My Valentine, Varunika? 💖">
+    <meta property="og:description" content="A special interactive question just for you.">
+    <meta property="og:image" content="https://placehold.co/1200x630/ff8fa3/590d22?text=For+Varunika+❤️">
+
+    <!-- Twitter Preview -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Will You Be My Valentine, Varunika? 💖">
+    <meta property="twitter:description" content="A special interactive question just for you.">
+    <meta property="twitter:image" content="https://placehold.co/1200x630/ff8fa3/590d22?text=For+Varunika+❤️">
+
+    <!-- Importing Google Fonts for that romantic feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #ff8fa3;
+            --soft-cream: #fff0f3;
+            --deep-red: #c9184a;
+            --romantic-rose: #e01e37;
+            --text-color: #590d22;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevent scrolling */
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 50%, #ffb3c1 100%);
+            color: var(--text-color);
+        }
+
+        /* Floating Hearts Background Animation */
+        .bg-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .heart-bg {
+            position: absolute;
+            bottom: -10vh;
+            background-color: rgba(255, 255, 255, 0.4);
+            display: inline-block;
+            height: 30px;
+            width: 30px;
+            transform: rotate(-45deg);
+            animation: float 6s linear infinite;
+        }
+
+        .heart-bg:before, .heart-bg:after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: inherit;
+            border-radius: 50%;
+        }
+
+        .heart-bg:before { top: -15px; left: 0; }
+        .heart-bg:after { left: 15px; top: 0; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(-45deg) scale(0.8); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(-45deg) scale(1); opacity: 0; }
+        }
+
+        /* Main Container */
+        #app {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Pages/Slides */
+        .slide {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--deep-red);
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Photo Frame Style for Collage */
+        .photo-frame {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+            transition: transform 0.3s ease;
+            max-width: 100%;
+            margin-bottom: 15px;
+            cursor: pointer; /* Indicates clickability */
+            position: relative;
+        }
+
+        .photo-frame:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .photo-frame img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            max-height: 350px; /* Limit height so it fits on mobile */
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        /* Hint text for gallery */
+        .tap-hint {
+            display: block;
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        button {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            border-radius: 50px;
+            /* Changed transition to avoid animating width, which caused calculation errors */
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-next {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: white;
+            color: var(--deep-red);
+        }
+
+        .btn-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(199, 24, 74, 0.2);
+        }
+
+        /* Proposal Specific Buttons */
+        .btn-yes {
+            padding: 18px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            animation: pulse-romantic 2s infinite;
+            z-index: 20;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-no {
+            padding: 12px 30px;
+            font-size: 1rem;
+            background-color: var(--deep-red);
+            color: white;
+            position: relative;
+            /* Explicit transitions for position only */
+            transition: top 0.3s ease, left 0.3s ease, background-color 0.3s;
+            z-index: 20;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        @keyframes pulse-romantic {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 117, 140, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 117, 140, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 117, 140, 0); }
+        }
+
+        /* Success Message */
+        .success-text {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.5rem;
+            color: var(--deep-red);
+            margin-bottom: 20px;
+        }
+
+        .gif-container img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Canvas for Confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .btn-yes { width: 100%; padding: 15px; }
+            .btn-no { width: auto; }
+            .photo-frame { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Animation Elements -->
+    <div class="bg-hearts" id="bg-hearts"></div>
+
+    <!-- Canvas for Confetti -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <div id="app">
+        
+        <!-- Slide 1: Welcome -->
+        <div class="slide active" id="slide-1">
+            <h1>Hey Varunika...</h1>
+            <p>I have something important to ask you.</p>
+            <p>But first, I need you to promise to answer honestly.</p>
+            <!-- Flow Logic: 1 -> 2 -->
+            <button class="btn-next" onclick="nextSlide(2)">I promise 🤞</button>
+        </div>
+
+        <!-- Slide 2: Build Up -->
+        <div class="slide" id="slide-2">
+            <h1>You ready?</h1>
+            <p>Take a deep breath.</p>
+            <p>Here it goes...</p>
+            <!-- Flow Logic: 2 -> 3 -->
+            <button class="btn-next" onclick="nextSlide(3)">I'm ready!</button>
+        </div>
+
+        <!-- Slide 3: The Proposal -->
+        <div class="slide" id="slide-3">
+            <h1>Will you be my Valentine?</h1>
+            <div class="btn-container" style="position: relative; min-height: 200px;">
+                <!-- Flow Logic: 3 -> 4 (Via acceptProposal) -->
+                <button class="btn-yes" onclick="acceptProposal()">Definitely Yes 💖</button>
+                <button class="btn-no" id="no-btn">No</button>
+            </div>
+        </div>
+
+        <!-- Slide 4: Success -->
+        <div class="slide" id="slide-4">
+            <div class="gif-container">
+                <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" alt="Happy Bear Hug">
+            </div>
+            <div class="success-text">I knew you would accept!</div>
+            <p>Happy Valentine's Day Varu! 🌹</br>
+            From your one and only, Praful ❤️</p>
+            <!-- Flow Logic: 4 -> 5 -->
+            <button class="btn-next" onclick="nextSlide(5)">See Our Memories 📸</button>
+        </div>
+
+        <!-- Slide 5: Our Journey (Gallery) -->
+        <div class="slide" id="slide-5">
+            <h1>Our Journey Together</h1>
+            <!-- Added onClick to the frame -->
+            <div class="photo-frame" onclick="nextGalleryImage()">
+                <!-- Default Image (will be replaced by JS) -->
+                <img id="gallery-img" src="https://placehold.co/600x400/ffccd5/590d22?text=Our+Memory+1" alt="Our Beautiful Memories">
+                <span class="tap-hint">Tap photo to see next ❤️</span>
+            </div>
+            <!-- Dynamic Caption -->
+            <p id="gallery-caption" style="font-style: italic; color: var(--deep-red); min-height: 50px;">"Every love story is beautiful, but ours is my favorite."</p>
+            
+            <button class="btn-next" onclick="location.reload()">Replay 🔄</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Navigation Logic ---
+        function nextSlide(slideNumber) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide-${slideNumber}`).classList.add('active');
+        }
+
+        // --- Gallery Logic (Slide 5) ---
+        // REPLACE these URLs with your actual photo URLs
+        const ourMemories = [
+            {
+                url: "Varunika/images/photo1.png",
+                caption: "Remember our first date? I knew then you were special."
+            },
+            {
+                url: "Varunika/images/photo2.png",
+                caption: "The best adventure is the one we share together."
+            },
+            {
+                url: "Varunika/images/photo3.png",
+                caption: "I love that I can be myself around you."
+            },
+            {
+                url: "Varunika/images/photo4.png",
+                caption: "Every love story is beautiful, but ours is my favorite."
+            },
+            {
+                url: "Varunika/images/photo5.png",
+                caption: "I can't wait to see what the future holds for us."
+            }
+        ];
+
+        let currentMemoryIndex = 0;
+
+        function nextGalleryImage() {
+            // Cycle index
+            currentMemoryIndex = (currentMemoryIndex + 1) % ourMemories.length;
+            
+            // Update DOM
+            const imgElement = document.getElementById('gallery-img');
+            const captionElement = document.getElementById('gallery-caption');
+            
+            // Simple fade effect
+            imgElement.style.opacity = 0;
+            captionElement.style.opacity = 0;
+
+            setTimeout(() => {
+                imgElement.src = ourMemories[currentMemoryIndex].url;
+                captionElement.innerText = `"${ourMemories[currentMemoryIndex].caption}"`;
+                
+                imgElement.style.opacity = 1;
+                captionElement.style.opacity = 1;
+            }, 200);
+        }
+
+        // Initialize Gallery with first image
+        document.getElementById('gallery-img').src = ourMemories[0].url;
+        document.getElementById('gallery-caption').innerText = `"${ourMemories[0].caption}"`;
+        document.getElementById('gallery-img').style.transition = "opacity 0.2s ease";
+        document.getElementById('gallery-caption').style.transition = "opacity 0.2s ease";
+
+
+        // --- Runaway Button Logic (Center-Based Limit) ---
+        const noBtn = document.getElementById('no-btn');
+        const phrases = [
+            "Think again!", "Are you sure?", "Try the other option!", "Don't break my heart 💔",
+            "Pretty please?", "Wrong button!", "Missed me!", "You can't catch me!",
+            "Not this one!", "Give it another shot!", "I have cookies! 🍪", "Too slow! 💨",
+            "Seriously? 🥺", "You're teasing me!", "Button is broken 🛠️", "Look left! ⬅️",
+            "Just say YES! 💖", "I'm not giving up!", "Is that your final answer? 🧐",
+            "You're playing hard to get! 😉", "I know you want to click Yes!",
+            "Clicking this does nothing... kinda.", "Error 404: No not found.",
+            "I'm slippery! 🐍", "Nice try, but nope!", "Keep chasing! 🏃‍♂️",
+            "You can't escape my love! ❤️", "Just one click to the left..."
+        ];
+
+        let hasMoved = false;
+
+        function moveButton() {
+            // 1. Update text first so we get the new width
+            const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+            noBtn.innerText = randomPhrase;
+
+            // 2. Ensure it's fixed position
+            noBtn.style.position = 'fixed';
+            hasMoved = true;
+
+            // 3. Get precise viewport dimensions
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // 4. Get new button dimensions
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // 5. Define Safety Padding
+            const padding = 30; 
+
+            // 6. Calculate Center-Based Limits
+            // The maximum distance the *center* of the button can be from the *center* of the screen:
+            const maxOffsetX = (viewportWidth - btnWidth) / 2 - padding;
+            const maxOffsetY = (viewportHeight - btnHeight) / 2 - padding;
+
+            // 7. Generate Random Offsets from Center
+            // If screen is too small (maxOffset < 0), we clamp to 0 (center it)
+            const safeOffsetX = Math.max(0, maxOffsetX);
+            const safeOffsetY = Math.max(0, maxOffsetY);
+
+            // Random value between -safeOffset and +safeOffset
+            const randomX = (Math.random() * 2 - 1) * safeOffsetX;
+            const randomY = (Math.random() * 2 - 1) * safeOffsetY;
+
+            // 8. Calculate Top/Left positions
+            const centerX = viewportWidth / 2;
+            const centerY = viewportHeight / 2;
+
+            const finalLeft = centerX + randomX - (btnWidth / 2);
+            const finalTop = centerY + randomY - (btnHeight / 2);
+
+            // 9. Apply
+            noBtn.style.left = finalLeft + 'px';
+            noBtn.style.top = finalTop + 'px';
+        }
+
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        // --- Success Logic ---
+        function acceptProposal() {
+            startConfetti();
+            nextSlide(4);
+        }
+
+        // --- Background Floating Hearts Generator ---
+        function createHearts() {
+            const container = document.getElementById('bg-hearts');
+            const heartCount = 15;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart-bg');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // --- Confetti Logic ---
+        const canvas = document.getElementById("confetti-canvas");
+        const ctx = canvas.getContext("2d");
+        let confettiParticles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function startConfetti() {
+            for (let i = 0; i < 300; i++) {
+                confettiParticles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 6 + 2,
+                    d: Math.random() * 30 + 10,
+                    color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+                    tilt: Math.floor(Math.random() * 10) - 10,
+                    tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+                    tiltAngle: 0
+                });
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiParticles.forEach((p, index) => {
+                ctx.beginPath();
+                ctx.lineWidth = p.r / 2;
+                ctx.strokeStyle = p.color;
+                ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+                ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+                ctx.stroke();
+                p.tiltAngle += p.tiltAngleIncremental;
+                p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+                p.x += Math.sin(0);
+                p.tilt = Math.sin(p.tiltAngle - index / 3) * 15;
+                if (p.y > canvas.height) {
+                    p.y = -20;
+                    p.x = Math.random() * canvas.width;
+                }
+            });
+            requestAnimationFrame(animateConfetti);
+        }
+    </script>
+</body>
+</html>
