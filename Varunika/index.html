@@ -329,7 +329,7 @@
             <!-- Added onClick to the frame -->
             <div class="photo-frame" onclick="nextGalleryImage()">
                 <!-- Default Image (will be replaced by JS) -->
-                <img id="gallery-img" src="https://placehold.co/600x400/ffccd5/590d22?text=Our+Memory+1" alt="Our Beautiful Memories">
+                <img id="gallery-img" src="Varunika/Images/photo1.jpg" alt="Our Beautiful Memories" onerror="this.src='https://placehold.co/600x400/ffccd5/590d22?text=Image+Not+Found'">
                 <span class="tap-hint">Tap photo to see next ❤️</span>
             </div>
             <!-- Dynamic Caption -->
@@ -350,26 +350,26 @@
         }
 
         // --- Gallery Logic (Slide 5) ---
-        // REPLACE these URLs with your actual photo URLs
+        // REPLACE these filenames with your actual photo names
         const ourMemories = [
             {
-                url: "Varunika/images/photo1.png",
+                url: "Varunika/Images/photo1.jpg", 
                 caption: "Remember our first date? I knew then you were special."
             },
             {
-                url: "Varunika/images/photo2.png",
+                url: "Varunika/Images/photo2.jpg",
                 caption: "The best adventure is the one we share together."
             },
             {
-                url: "Varunika/images/photo3.png",
+                url: "Varunika/Images/photo3.jpg",
                 caption: "I love that I can be myself around you."
             },
             {
-                url: "Varunika/images/photo4.png",
+                url: "Varunika/Images/photo4.jpg",
                 caption: "Every love story is beautiful, but ours is my favorite."
             },
             {
-                url: "Varunika/images/photo5.png",
+                url: "Varunika/Images/photo5.jpg",
                 caption: "I can't wait to see what the future holds for us."
             }
         ];
@@ -398,7 +398,9 @@
         }
 
         // Initialize Gallery with first image
-        document.getElementById('gallery-img').src = ourMemories[0].url;
+        // Check if images exist, if not show error in console or placeholder
+        const firstImage = ourMemories[0].url;
+        document.getElementById('gallery-img').src = firstImage;
         document.getElementById('gallery-caption').innerText = `"${ourMemories[0].caption}"`;
         document.getElementById('gallery-img').style.transition = "opacity 0.2s ease";
         document.getElementById('gallery-caption').style.transition = "opacity 0.2s ease";
@@ -442,8 +444,8 @@
 
             // 6. Calculate Center-Based Limits
             // The maximum distance the *center* of the button can be from the *center* of the screen:
-            const maxOffsetX = (viewportWidth - btnWidth) / 2 - padding;
-            const maxOffsetY = (viewportHeight - btnHeight) / 2 - padding;
+            const maxOffsetX = (viewportWidth - btnWidth) / 4 - padding;
+            const maxOffsetY = (viewportHeight - btnHeight) / 4 - padding;
 
             // 7. Generate Random Offsets from Center
             // If screen is too small (maxOffset < 0), we clamp to 0 (center it)
@@ -458,8 +460,8 @@
             const centerX = viewportWidth / 2;
             const centerY = viewportHeight / 2;
 
-            const finalLeft = centerX + randomX - (btnWidth / 2);
-            const finalTop = centerY + randomY - (btnHeight / 2);
+            const finalLeft = centerX + randomX - (btnWidth / 1);
+            const finalTop = centerY + randomY - (btnHeight / 1);
 
             // 9. Apply
             noBtn.style.left = finalLeft + 'px';
