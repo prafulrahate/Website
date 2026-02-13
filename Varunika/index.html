@@ -434,7 +434,7 @@
             // If we've passed Feb 14th this year, look for next year? 
             // OR if you want to test it "today", assume target is next occurring Feb 14.
             if (now.getTime() > targetDate.getTime()) {
-                 targetDate = new Date(currentYear + 1, 1, 14, 0, 0, 0);
+                 targetDate = new Date(currentYear, 1, 14, 0, 0, 0);
             }
 
             const timer = setInterval(function() {
@@ -671,6 +671,7 @@
     </script>
 </body>
 </html>
+
 
 
 
